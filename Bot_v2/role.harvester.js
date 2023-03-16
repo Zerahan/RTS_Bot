@@ -9,6 +9,13 @@ var HarvesterRole = {
             }
             if(creep.memory.container){
                 creep.transfer(Game.getObjectById(creep.memory.container), RESOURCE_ENERGY);
+            }else{
+                var containers = creep.pos.findInRange(FIND_STRUCTURES, 1);
+                containers = containers.filter((c)=>(c.structureType == STRUCTURE_CONTAINER));
+                
+                if(containers.length > 0){
+                    creep.memory.container = containers[0].id;
+                }
             }
         }
     }

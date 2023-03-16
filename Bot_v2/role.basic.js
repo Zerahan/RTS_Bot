@@ -56,6 +56,8 @@ var BasicRole = {
                 if(creep.memory.role == 'basicHarvester'){
                     if(creep.memory.outpost != undefined){
                         creep.memory.role = 'harvester';
+                        creep.memory.target = undefined;
+                        creep.memory.container = undefined;
                         room.memory.outposts[creep.memory.outpost].creeps.harvester.push(creep.name);
                         continue;
                     }
@@ -75,6 +77,12 @@ var BasicRole = {
                     }
                 }
                 if(creep.memory.role == 'basicTransporter'){
+                    if(creep.memory.outpost != undefined){
+                        creep.memory.role = 'transporter';
+                        creep.memory.target = undefined;
+                        room.memory.outposts[creep.memory.outpost].creeps.transporter.push(creep.name);
+                        continue;
+                    }
                     transporters.push(creep);
                     this.transporter(creep, towers);
                 }
@@ -89,7 +97,7 @@ var BasicRole = {
             if(spawn.store[RESOURCE_ENERGY] < 300) continue;
             if(spawn.spawning) continue;
             var spawnedCreepRole = "";
-            if(harvesters.length < 0){
+            if(harvesters.length < 0){ // 0 is disabled
                 modules = (room.memory.freeBuild ? [WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE]: [WORK,WORK,CARRY,MOVE]);
                 errCode = spawn.spawnCreep(modules, 'Harvester' + Game.time, {memory:{role:'basicHarvester'}});
                 spawnedCreepRole = 'harvester';
@@ -134,7 +142,11 @@ var BasicRole = {
         if(creep.memory.target == undefined){
             const targets = creep.room.find(FIND_SOURCES);
             const closestTarget = creep.room.controller.pos.findClosestByPath(targets);
-            creep.memory.target = closestTarget.id;
+            if(closestTarget){
+                creep.memory.target = closestTarget.id;
+            }else{
+                
+            }
         }
         if(creep.store.getFreeCapacity(RESOURCE_ENERGY) >= creep.memory.mineStrength){
             const myTarget = Game.getObjectById(creep.memory.target); 
@@ -383,9 +395,12 @@ var BasicRole = {
             if(targets.length == 0) targets = creep.room.find(FIND_STRUCTURES, {filter: (c)=>(c.structureType == STRUCTURE_CONTAINER && c.store.getUsedCapacity(RESOURCE_ENERGY) > 0)});
             if(targets.length == 0) targets = creep.room.find(FIND_MY_CREEPS, {filter: (c)=>(c.memory.role=='basicHarvester' && c.store.getUsedCapacity(RESOURCE_ENERGY) > 0)});
             if(targets.length == 0) targets = creep.room.find(FIND_MY_CREEPS, {filter: (c)=>(c.memory.role=='harvester' && c.store.getUsedCapacity(RESOURCE_ENERGY) > 0)});
+            if(targets.length == 0) targets = creep.room.find(FIND_SOURCES);
             if(targets.length > 0){
                 const closestTarget = creep.pos.findClosestByPath(targets);
-                creep.memory.target = closestTarget.id;
+                if(closestTarget){
+                    creep.memory.target = closestTarget.id;
+                }
             }else{
                 return;
             }

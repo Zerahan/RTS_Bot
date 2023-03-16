@@ -1,4 +1,6 @@
 var HarvesterRole = require('role.harvester');
+var TransporterRole = require('role.transporter');
+var Logger = require('logger');
 
 // Outposts are things like energy sources.
 
@@ -24,7 +26,16 @@ Outpost.prototype.run = function(room){
                     }
                 }
                 //console.log("Harvesters...");
-                HarvesterRole.run(creep);
+                switch(creep.memory.role){
+                    case 'harvester':
+                        HarvesterRole.run(creep);
+                        break;
+                    case 'transporter':
+                        TransporterRole.run(creep);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -38,12 +49,18 @@ Outpost.prototype.run = function(room){
         var isSpawning = ERR_INVALID_ARGS;
         if(spawns.length > 0){
             for(var role in this.memory.maxCreeps){
-                console.log(this.id + ": " + this.memory.creeps[role].length + " < " + this.memory.maxCreeps[role]);
+                //Logger.log("Outpost ("+this.id + "): " + "# of " + role + " is " + this.memory.creeps[role].length + " < " + this.memory.maxCreeps[role]);
                 if(this.memory.creeps[role].length < this.memory.maxCreeps[role]){
                     switch(role){
                         case 'harvester':
                             var modules = (room.memory.freeBuild ? [WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE]: [WORK,WORK,CARRY,MOVE]);
-                            isSpawning = spawns[0].spawnCreep(modules, 'OutpostHarvester' + Game.time, {memory:{role:'basicHarvester', outpost: this.id}});
+                            isSpawning = spawns[0].spawnCreep(modules, 'OutpostHarvester' + Game.time, {memory:{role:'basicHarvester', outpost: this.id, target: this.id}});
+                            break;
+                        case 'transporter':
+                            var modules = (room.memory.freeBuild ? [WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE]: [CARRY,MOVE]);
+                            isSpawning = spawns[0].spawnCreep(modules, 'OutpostTransporter' + Game.time, {memory:{role:'basicTransporter', outpost: this.id, target: undefined}});
+                            break;
+                        default:
                             break;
                     }
                     if(isSpawning == OK){
@@ -86,7 +103,16 @@ Outpost.prototype.initialize = function(room){
                     }
                 }
                 if(!this.memory.containers){
-                    this.memory.containers = new Array();
+                    var containers = Game.getObjectById(this.id).pos.findInRange(FIND_STRUCTURES,1);
+                    containers = _.filter(containers,((s)=>(s.structureType == STRUCTURE_CONTAINER)));
+                    console.log("Containers: " + containers.length);
+                    if(containers.length > 0){
+                        this.memory.containers = new Array();
+                        for(var c in containers){
+                            this.memory.containers.push(containers[c].id);
+                        }
+                    }
+                    /*/
                     var neighbors = Game.getObjectById(this.id).pos.getNeighbors();
                     for(var n in neighbors){
                         var structures = room.lookForAt(LOOK_STRUCTURES, neighbors[n].x, neighbors[n].y);
@@ -98,9 +124,21 @@ Outpost.prototype.initialize = function(room){
                             this.memory.containers.push(structures[s].id);
                         }
                     }
+                    //*/
                 }
                 break;
             case 'controller':
+                if(!this.memory.containers){
+                    var containers = Game.getObjectById(this.id).pos.findInRange(FIND_STRUCTURES,2);
+                    containers = _.filter(containers,((s)=>(s.structureType == STRUCTURE_CONTAINER)));
+                    console.log("Containers: " + containers.length);
+                    if(containers.length > 0){
+                        this.memory.containers = new Array();
+                        for(var c in containers){
+                            this.memory.containers.push(containers[c].id);
+                        }
+                    }
+                }
                 break;
             case 'spawner':
                 break;
@@ -109,6 +147,7 @@ Outpost.prototype.initialize = function(room){
     room.visual.circle(this.pos, {fill: '#00000000', radius: 0.5, stroke: '#00ffff'});
     for(var a in this.memory.containers){
         var container = Game.getObjectById(this.memory.containers[a]);
+        if(!container) continue;
         room.visual.line(this.pos.x, this.pos.y, container.pos.x, container.pos.y, {color: '#00ff00'});
         room.visual.circle(container.pos, {fill: '#00ff00'});
     }

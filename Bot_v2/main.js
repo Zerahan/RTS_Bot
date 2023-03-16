@@ -8,6 +8,7 @@ var ConstructionPlanner = require('planner.construction');
 var OutpostManager = require('manager.outpost');
 
 module.exports.loop = function () {
+    Game.debugMode = true;
     var showGameTick = false;
     var roomToObserve = "W9N1";
     if(showGameTick){

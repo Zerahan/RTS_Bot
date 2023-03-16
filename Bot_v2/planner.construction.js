@@ -115,6 +115,8 @@ var ConstructionPlanner = {
                     }
                     //console.log("--foundRoad: " + foundRoad);
                     break;
+                case 2:
+                    break;
                 default:
                     foundRoad = true;
                     break;
