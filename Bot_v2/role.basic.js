@@ -167,20 +167,7 @@ var BasicRole = {
                 creep.memory.state = true;
             }
         }
-        if(creep.memory.target == undefined){
-            //console.log("Structures: " + creep.room.find(FIND_STRUCTURES, {filter: (c)=>(c.structureType == STRUCTURE_CONTAINER && c.store.getUsedCapacity(RESOURCE_ENERGY) > 0)}).length);
-            var targets = creep.room.find(FIND_DROPPED_RESOURCES, {filter: (c)=>(c.resourceType == RESOURCE_ENERGY)});
-            if(targets.length == 0) targets = creep.room.find(FIND_TOMBSTONES, {filter: (c)=>(c.store[RESOURCE_ENERGY] > 0)});
-            if(targets.length == 0) targets = creep.room.find(FIND_RUINS, {filter: (c)=>(c.store[RESOURCE_ENERGY] > 0)});
-            if(targets.length == 0) targets = creep.room.find(FIND_STRUCTURES, {filter: (c)=>(c.structureType == STRUCTURE_CONTAINER && c.store.getUsedCapacity(RESOURCE_ENERGY) > 0)});
-            if(targets.length == 0) targets = creep.room.find(FIND_MY_CREEPS, {filter: (c)=>(c.memory.role=='basicHarvester')});
-            if(targets.length > 0){
-                const closestTarget = creep.pos.findClosestByPath(targets);
-                creep.memory.target = closestTarget.id;
-            }else{
-                return;
-            }
-        }
+        this.findEnergy(creep);
         if(creep.memory.state == true){
             const myTarget = Game.getObjectById(creep.memory.target);
             if(myTarget == undefined){ creep.memory.target = undefined; return; }
@@ -212,19 +199,7 @@ var BasicRole = {
                 creep.memory.state = true;
             }
         }
-        if(creep.memory.target == undefined){
-            var targets = creep.room.find(FIND_DROPPED_RESOURCES, {filter: (c)=>(c.resourceType == RESOURCE_ENERGY)});
-            if(targets.length == 0) targets = creep.room.find(FIND_TOMBSTONES, {filter: (c)=>(c.store[RESOURCE_ENERGY] > 0)});
-            if(targets.length == 0) targets = creep.room.find(FIND_RUINS, {filter: (c)=>(c.store[RESOURCE_ENERGY] > 0)});
-            if(targets.length == 0) targets = creep.room.find(FIND_STRUCTURES, {filter: (c)=>(c.structureType == STRUCTURE_CONTAINER && c.store.getUsedCapacity(RESOURCE_ENERGY) > 0)});
-            if(targets.length == 0) targets = creep.room.find(FIND_MY_CREEPS, {filter: (c)=>(c.memory.role=='basicHarvester')});
-            if(targets.length > 0){
-                const closestTarget = creep.pos.findClosestByPath(targets);
-                creep.memory.target = closestTarget.id;
-            }else{
-                return;
-            }
-        }
+        this.findEnergy(creep);
         if(creep.memory.state == true){
             const myTarget = Game.getObjectById(creep.memory.target);
             if(myTarget == undefined){ creep.memory.target = undefined; return; }
@@ -296,6 +271,7 @@ var BasicRole = {
         }
     },
     buildDefenses: function(room){
+        return;
         if(!room.memory.basicDefenses){
             room.memory.basicDefenses = true;
             var wallTiles = new Array();
@@ -397,6 +373,26 @@ var BasicRole = {
             for(var t in wallTiles){
                 room.createConstructionSite(wallTiles[t].x, wallTiles[t].y, STRUCTURE_WALL);
             }
+        }
+    },
+    findEnergy: function(creep){
+        if(creep.memory.target == undefined || Game.getObjectById(creep.memory.target) == undefined){
+            var targets = creep.room.find(FIND_DROPPED_RESOURCES, {filter: (c)=>(c.resourceType == RESOURCE_ENERGY)});
+            if(targets.length == 0) targets = creep.room.find(FIND_TOMBSTONES, {filter: (c)=>(c.store[RESOURCE_ENERGY] > 0)});
+            if(targets.length == 0) targets = creep.room.find(FIND_RUINS, {filter: (c)=>(c.store[RESOURCE_ENERGY] > 0)});
+            if(targets.length == 0) targets = creep.room.find(FIND_STRUCTURES, {filter: (c)=>(c.structureType == STRUCTURE_CONTAINER && c.store.getUsedCapacity(RESOURCE_ENERGY) > 0)});
+            if(targets.length == 0) targets = creep.room.find(FIND_MY_CREEPS, {filter: (c)=>(c.memory.role=='basicHarvester' && c.store.getUsedCapacity(RESOURCE_ENERGY) > 0)});
+            if(targets.length == 0) targets = creep.room.find(FIND_MY_CREEPS, {filter: (c)=>(c.memory.role=='harvester' && c.store.getUsedCapacity(RESOURCE_ENERGY) > 0)});
+            if(targets.length > 0){
+                const closestTarget = creep.pos.findClosestByPath(targets);
+                creep.memory.target = closestTarget.id;
+            }else{
+                return;
+            }
+        }else{
+        //    if(creep.memory.state == true && Game.getObjectById(creep.memory.target).store && Game.getObjectById(creep.memory.target).store.getUsedCapacity(RESOURCE_ENERGY) == 0){
+        //        creep.memory.target = undefined;
+        //    }
         }
     },
     distance: function(a,b){

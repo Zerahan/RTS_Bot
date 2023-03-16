@@ -1,5 +1,7 @@
 var HarvesterRole = require('role.harvester');
 
+// Outposts are things like energy sources.
+
 function Outpost(id){
     this.id = id;
     this.pos = Game.getObjectById(id).pos;
@@ -17,10 +19,11 @@ Outpost.prototype.run = function(room){
                     creep.memory.target = this.id;
                 }
                 if(!creep.memory.container){
-                    if(this.memory.containers.length > 0){
+                    if(this.memory.containers && this.memory.containers.length > 0){
                         creep.memory.container = this.memory.containers[0];
                     }
                 }
+                //console.log("Harvesters...");
                 HarvesterRole.run(creep);
             }
         }
@@ -82,7 +85,7 @@ Outpost.prototype.initialize = function(room){
                         this.memory.creeps[role] = new Array();
                     }
                 }
-                if(this.memory.containers){
+                if(!this.memory.containers){
                     this.memory.containers = new Array();
                     var neighbors = Game.getObjectById(this.id).pos.getNeighbors();
                     for(var n in neighbors){

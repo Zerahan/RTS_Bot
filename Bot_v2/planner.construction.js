@@ -134,7 +134,7 @@ var ConstructionPlanner = {
     },
     run: function(room){
         this.roadBuilderMk2(room);
-        this.defenseBuilderMk1(room);
+        //this.defenseBuilderMk1(room);
         //if(room.memory.roadBuilder != undefined) delete room.memory.roadBuilder;
         /*/
         for(var k in room.sources){
