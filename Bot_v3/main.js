@@ -5,7 +5,7 @@ var CreepPrototype = require('prototype.creep');
 var SpawnPrototype = require('prototype.structureSpawn');
 var BasicRole = require('role.basic');
 var ConstructionPlanner = require('planner.construction');
-var OutpostManager = require('manager.outpost');
+var OutpostManager = require('manager_outpost');
 
 module.exports.loop = function () {
     Game.debugMode = true;
