@@ -47,9 +47,9 @@ Outpost.prototype.run = function(room){
         spawns = _.filter(spawns, (s)=>(s.spawning == null && s.store.getFreeCapacity(RESOURCE_ENERGY) == 0));
         //console.log("Available spawns: " + spawns.length);
         var isSpawning = ERR_INVALID_ARGS;
-        if(spawns.length > 0){
+        if(spawns.length > 0 && false){
             for(var role in this.memory.maxCreeps){
-                //Logger.log("Outpost ("+this.id + "): " + "# of " + role + " is " + this.memory.creeps[role].length + " < " + this.memory.maxCreeps[role]);
+                Logger.log("Outpost ("+this.id + "): " + "# of " + role + " is " + this.memory.creeps[role].length + " < " + this.memory.maxCreeps[role]);
                 if(this.memory.creeps[role].length < this.memory.maxCreeps[role]){
                     switch(role){
                         case 'harvester':
