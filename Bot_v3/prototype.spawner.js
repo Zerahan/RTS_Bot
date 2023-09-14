@@ -1,4 +1,4 @@
-Object.defineProperty(StructureSpawner.prototype, 'memory', {
+/*/Object.defineProperty(StructureSpawn.prototype, 'memory', {
     get: function(){
         if(_.isUndefined(Memory.spawners)) Memory.spawners = {};
         return Memory.spawners[this.id] = Memory.spawners[this.id] || {};
@@ -8,9 +8,9 @@ Object.defineProperty(StructureSpawner.prototype, 'memory', {
         Memory.spawners[this.id] = value;
     },
     configurable: true
-})
+})//*/
 
-Object.defineProperty(StructureSpawner.prototype, 'currentOrder',{
+Object.defineProperty(StructureSpawn.prototype, 'currentOrder',{
     get: function(){
         return this.memory.currentOrder;
     },
@@ -21,10 +21,10 @@ Object.defineProperty(StructureSpawner.prototype, 'currentOrder',{
     configurable: true
 })
 
-StructureSpawner.prototype.CanAddOrder = function(spawner){
+StructureSpawn.prototype.CanAddOrder = function(spawner){
 
 }
 
-StructureSpawner.prototype.GetCurrentOrder = function(spawner){
+StructureSpawn.prototype.GetCurrentOrder = function(spawner){
 
 }

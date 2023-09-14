@@ -1,4 +1,6 @@
 var CreepPrototype = require('prototype.creep');
+var SpawnerPrototype = require('prototype.spawner');
+var RoomPositionPrototype = require('prototype.roomposition');
 var BasicManager = require('manager.basic');
 var Mapper = require('planner.mapper');
 

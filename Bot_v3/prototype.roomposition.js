@@ -39,3 +39,7 @@ RoomPosition.prototype.getCoordFromDirection = function(direction){
         default:            return [ 0, 0];
     }
 }
+
+RoomPosition.prototype.convertToTile = function(){
+    return {x: this.x, y: this.y, roomName: this.roomName};
+}

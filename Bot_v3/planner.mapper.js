@@ -15,19 +15,19 @@ var Mapper = {
                 var maxCliff = Memory.rooms[room.name].map.cliffNum || 50;
                 var color = this.getColor(tile.cost * (tile.cliff/maxCliff), maxCost, [0,0,0], [0,255,255], [0,255,0]);
                 var hex = this.rgbToHex(color[0], color[1], color[2]);
-                this.drawRect(room, tile.x, tile.y, hex);
+                this.drawRect(room, tile.x, tile.y, hex, tile.cost);
             }else{
                 if(!showExitDistance){
                     var maxCost = Memory.rooms[room.name].map.cliffNum-1 || 50;
                     var color = this.getColor(tile.cliff, maxCost, [255,0,0], [0,0,255], [0,255,0]);
                     var hex = this.rgbToHex(color[0], color[1], color[2]);
-                    this.drawRect(room, tile.x, tile.y, hex);
+                    this.drawRect(room, tile.x, tile.y, hex, tile.cost);
                 }
                 if(showExitDistance){
                     var maxCost = Memory.rooms[room.name].map.maxCost || 50;
                     var color = this.getColor(tile.cost, maxCost, [255,0,0], [0,0,255], [0,255,0]);
                     var hex = this.rgbToHex(color[0], color[1], color[2]);
-                    this.drawRect(room, tile.x, tile.y, hex);
+                    this.drawRect(room, tile.x, tile.y, hex, tile.cost);
                 }
             }
             //this.drawDirection(room, tile.x, tile.y, tile.dir, hex);
@@ -200,9 +200,11 @@ var Mapper = {
         opacity = opacity || 1;
         room.visual.text(str, x, y+0.25, {align:'center', opacity: opacity});
     },
-    drawRect : function(room, x, y, color){
+    drawRect : function(room, x, y, color, value){
+        value = value || 0;
         color = color || '#ffffff';
-        room.visual.rect(x-0.5, y-0.5, 1, 1, {fill:color, stroke:'transparent', opacity:0.4});
+        room.visual.rect(x-0.5, y-0.5, 1, 1, {fill: color, stroke: 'transparent', opacity: 0.3});
+        if(value == 19) room.visual.rect(x-0.5, y-0.5, 1, 1, {fill: 'transparent', stroke: '#ffffff', opacity: 1});
     },
     drawDirection : function(room, x, y, dir, color){
         var x2 = x;
